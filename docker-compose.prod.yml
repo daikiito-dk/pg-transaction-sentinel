@@ -1,0 +1,88 @@
+# Production-style deployment for a single host (e.g. Amazon Lightsail).
+# Only Caddy is published; PostgreSQL and Streamlit stay on the internal network.
+#
+#   docker compose -f docker-compose.prod.yml up -d --build
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-aml}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-aml_db}
+      TZ: Asia/Tokyo
+      PGTZ: Asia/Tokyo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [backend]
+    logging: *default-logging
+
+  bootstrap:
+    build: .
+    command: ["python", "bootstrap.py"]
+    restart: "no"
+    environment: &app-env
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-aml}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-aml_db}
+      PUBLIC_DEMO: ${PUBLIC_DEMO:-true}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [backend]
+    logging: *default-logging
+
+  app:
+    build: .
+    restart: unless-stopped
+    environment: *app-env
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks: [backend, frontend]
+    logging: *default-logging
+
+  caddy:
+    image: caddy:2.11-alpine
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    networks: [frontend]
+    logging: *default-logging
+
+networks:
+  backend:
+    internal: true
+  frontend:
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

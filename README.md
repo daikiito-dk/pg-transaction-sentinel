@@ -103,18 +103,31 @@ make lint     # Ruff lint and format check
 make format   # Auto-fix
 ```
 
+## Deployment
+
+The same stack can be published on a single Amazon Lightsail instance (USD 12/month) with Docker Compose and Caddy for automatic HTTPS. Only Caddy is exposed to the internet, and the public demo mode (`PUBLIC_DEMO=true`) disables re-scoring. See [docs/DEPLOY.md](docs/DEPLOY.md).
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
 ## Project structure
 
 ```
-├── docker-compose.yml      PostgreSQL container
-├── db/init/01_schema.sql   Table definitions
-├── config.py               Database connection and risk thresholds
-├── db.py                   Bulk load with COPY
-├── generate_data.py        Synthetic data generator
-├── ml_engine.py            Features and scoring
-├── app.py                  Streamlit dashboard
-├── .streamlit/config.toml  Dark theme
-└── tests/                  pytest
+├── docker-compose.yml        PostgreSQL container (local development)
+├── docker-compose.prod.yml   PostgreSQL + app + Caddy (deployment)
+├── Dockerfile                App image
+├── deploy/Caddyfile          Reverse proxy and HTTPS
+├── docs/DEPLOY.md            Deployment guide
+├── db/init/01_schema.sql     Table definitions
+├── config.py                 Database connection, risk thresholds, public demo flag
+├── db.py                     Bulk load with COPY
+├── generate_data.py          Synthetic data generator
+├── ml_engine.py              Features and scoring
+├── bootstrap.py              First-run data setup for deployments
+├── app.py                    Streamlit dashboard
+├── .streamlit/config.toml    Dark theme
+└── tests/                    pytest
 ```
 
 ## Disclaimer
@@ -232,18 +245,31 @@ make lint     # Ruff による lint とフォーマットチェック
 make format   # 自動修正
 ```
 
+### デプロイ
+
+同じ構成を、Amazon Lightsail のインスタンス 1 台（月 12 米ドル）で公開できます。Docker Compose で動かし、Caddy が HTTPS を自動で設定します。インターネットに公開するのは Caddy だけで、公開デモモード（`PUBLIC_DEMO=true`）では再スコアリングを無効にします。手順は [docs/DEPLOY.md](docs/DEPLOY.md#日本語) を参照してください。
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
 ### ファイル構成
 
 ```
-├── docker-compose.yml      PostgreSQL コンテナ
-├── db/init/01_schema.sql   テーブル定義
-├── config.py               DB 接続とリスクしきい値
-├── db.py                   COPY による一括投入
-├── generate_data.py        ダミーデータ生成
-├── ml_engine.py            特徴量生成とスコアリング
-├── app.py                  Streamlit ダッシュボード
-├── .streamlit/config.toml  ダークテーマ
-└── tests/                  pytest
+├── docker-compose.yml        PostgreSQL コンテナ（ローカル開発用）
+├── docker-compose.prod.yml   PostgreSQL + アプリ + Caddy（公開用）
+├── Dockerfile                アプリのイメージ
+├── deploy/Caddyfile          リバースプロキシと HTTPS
+├── docs/DEPLOY.md            デプロイ手順書
+├── db/init/01_schema.sql     テーブル定義
+├── config.py                 DB 接続、リスクしきい値、公開デモの設定
+├── db.py                     COPY による一括投入
+├── generate_data.py          ダミーデータ生成
+├── ml_engine.py              特徴量生成とスコアリング
+├── bootstrap.py              公開環境の初回データ準備
+├── app.py                    Streamlit ダッシュボード
+├── .streamlit/config.toml    ダークテーマ
+└── tests/                    pytest
 ```
 
 ### 注意

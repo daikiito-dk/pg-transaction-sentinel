@@ -14,6 +14,9 @@ MEDIUM_RISK_THRESHOLD = 50
 # Typical reporting / auto-alert threshold that smurfing tries to evade (JPY)
 REPORTING_THRESHOLD_JPY = 1_000_000
 
+# Public internet deployment: disables operations that are expensive or mutate shared data
+PUBLIC_DEMO = os.getenv("PUBLIC_DEMO", "false").strip().lower() in {"1", "true", "yes"}
+
 
 def get_database_url() -> str:
     return os.getenv("DATABASE_URL", DEFAULT_DATABASE_URL)

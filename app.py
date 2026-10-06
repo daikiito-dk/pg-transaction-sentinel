@@ -9,7 +9,7 @@ import plotly.express as px
 import streamlit as st
 
 import ml_engine
-from config import HIGH_RISK_THRESHOLD, MEDIUM_RISK_THRESHOLD, get_engine
+from config import HIGH_RISK_THRESHOLD, MEDIUM_RISK_THRESHOLD, PUBLIC_DEMO, get_engine
 
 LEVEL_COLORS = {"HIGH": "#ef4444", "MEDIUM": "#f59e0b", "LOW": "#22c55e"}
 TYPOLOGY_LABELS = {
@@ -149,7 +149,15 @@ with st.sidebar:
 
     st.divider()
     st.markdown("### Model Operations")
-    if st.button("Re-score transactions", width="stretch"):
+    if (
+        st.button(
+            "Re-score transactions",
+            width="stretch",
+            disabled=PUBLIC_DEMO,
+            help="Disabled in the public demo / 公開デモでは無効です" if PUBLIC_DEMO else None,
+        )
+        and not PUBLIC_DEMO
+    ):
         with st.spinner("Running Isolation Forest + typology rules ..."):
             _, metrics = ml_engine.run(engine())
         load_monitoring_data.clear()
@@ -166,6 +174,11 @@ st.markdown(
     "PostgreSQL × Isolation Forest × Typology Rules</div>",
     unsafe_allow_html=True,
 )
+if PUBLIC_DEMO:
+    st.caption(
+        "Public demo with synthetic data. No real customers or accounts. / "
+        "合成データによる公開デモです。実在の顧客・口座とは関係ありません。"
+    )
 st.write("")
 
 in_period = data["timestamp"].dt.date.between(*date_range) if len(date_range) == 2 else True
