@@ -6,6 +6,8 @@ A tech demo of an anti-money laundering (AML) suspicious transaction monitoring 
 
 PostgreSQL stores the core banking data. An Isolation Forest model (scikit-learn) and money-laundering typology rules give every transaction a risk score from 0 to 100, and a dark-mode Streamlit dashboard shows the alerts. The project is an example of building an enterprise-style prototype in a short time with AI-driven development ("vibe coding").
 
+**[Try the live demo](https://aml-demo.trustyon.jp)**, hosted on Amazon Lightsail in Sydney. All data is synthetic, and re-scoring is disabled in the public demo.
+
 ## Background
 
 Japanese banks have long run core systems on mainframes and commercial databases. To cut costs and move faster, more of them now use open-source-based technology such as PostgreSQL and Apache Kafka, driven by cloud migration of core banking systems and microservice architectures.
@@ -95,6 +97,22 @@ On the default data, precision and recall are both 1.000 (an alert means a score
 - **Risk Overview**: Score distribution, alerts by typology, and daily alert volume
 - Sidebar: Filters for score threshold, typology, and period, plus a re-score button
 
+### Screenshots
+
+Captured from the [live demo](https://aml-demo.trustyon.jp) on October 7, 2026. All customers, accounts, and transactions shown are synthetic.
+
+**Alert queue / アラート一覧**
+
+![Alert queue with risk scores and monitoring metrics](docs/screenshots/alert-dashboard.png)
+
+**Account investigation / 口座別調査**
+
+![Account investigation with detection reasons and a transaction timeline](docs/screenshots/account-investigation.png)
+
+**Risk overview / リスク概況**
+
+![Risk score distribution, alerts by typology, and daily alert volume](docs/screenshots/risk-overview.png)
+
 ## Development
 
 ```bash
@@ -147,6 +165,8 @@ All data is synthetic and fictional. It is not related to any real person or acc
 PostgreSQL と機械学習による、不審取引（AML: アンチ・マネー・ロンダリング）検知ダッシュボードの技術デモです。
 
 PostgreSQL に勘定系のデータを保存します。Isolation Forest（scikit-learn）と、典型的なマネロン手口（タイポロジー）のルールを組み合わせて、各取引に 0〜100 の不審度スコアを付けます。結果はダークモードの Streamlit ダッシュボードに表示します。AI 主導の開発（バイブコーディング）で、エンタープライズ向けのプロトタイプを短時間で作る例として公開しています。
+
+**[公開デモを試す](https://aml-demo.trustyon.jp)**。Amazon Lightsail のシドニーリージョンで稼働しています。データはすべて架空の合成データで、公開デモでは再スコアリングを無効にしています。
 
 ### 背景
 
@@ -236,6 +256,10 @@ PostgreSQL と Streamlit は `localhost` だけで待ち受けます。
 - **Account investigation**: 口座情報、リスクバッジ、検知理由、取引タイムライン（Plotly）、取引履歴
 - **Risk Overview**: スコア分布、タイポロジー別の件数、日次のアラート推移
 - サイドバー: しきい値・タイポロジー・期間のフィルタと、再スコアリングボタン
+
+#### スクリーンショット
+
+2026 年 10 月 7 日に[公開デモ](https://aml-demo.trustyon.jp)から撮影しました。表示されている顧客・口座・取引はすべて架空の合成データです。[アラート一覧・口座別調査・リスク概況の画像](#screenshots)をご覧ください。
 
 ### 開発
 

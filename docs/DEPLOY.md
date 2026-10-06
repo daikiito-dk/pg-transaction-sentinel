@@ -31,10 +31,14 @@ Prices are from the [Lightsail instance bundles](https://docs.aws.amazon.com/lig
 ## 2. Create the instance
 
 1. Open the [Lightsail console](https://lightsail.aws.amazon.com/) and choose **Create instance**.
-2. Region: **Tokyo (ap-northeast-1)**.
+2. Region: choose a region available to your account, for example **Tokyo (ap-northeast-1)** or **Sydney (ap-southeast-2)**.
 3. Platform: **Linux/Unix**. Blueprint: **OS Only → Ubuntu 24.04 LTS**.
 4. Plan: **Dual-stack, USD 12 (2 GB RAM)**.
 5. Name the instance, for example `pg-transaction-sentinel`, and create it.
+
+Region availability can depend on your account. During this demo's deployment, a new account was assigned Sydney, and using Tokyo required enabling additional account features. You do not need to change account features just to follow this guide; the same stack works in Sydney. Review any account-change warning before proceeding.
+
+The [live demo](https://aml-demo.trustyon.jp) runs in **Sydney (ap-southeast-2)**. Instances and static IPs are regional resources, so choose the region before creating them.
 
 ## 3. Attach a static IP
 
@@ -162,10 +166,14 @@ Amazon Lightsail のインスタンス 1 台で、Docker Compose を使ってダ
 ### 2. インスタンスの作成
 
 1. [Lightsail コンソール](https://lightsail.aws.amazon.com/) を開き、**インスタンスの作成** を選びます。
-2. リージョン: **東京（ap-northeast-1）**
+2. リージョン: アカウントで利用できるリージョンを選びます。例: **東京（ap-northeast-1）** または **シドニー（ap-southeast-2）**
 3. プラットフォーム: **Linux/Unix**。設計図（ブループリント）: **OS のみ → Ubuntu 24.04 LTS**
 4. プラン: **デュアルスタック、12 米ドル（メモリ 2GB）**
 5. インスタンス名（例: `pg-transaction-sentinel`）を付けて作成します。
+
+利用できるリージョンは、アカウントによって異なる場合があります。このデモのデプロイ時は、新規アカウントにシドニーが割り当てられ、東京の利用には追加のアカウント機能の有効化が必要でした。この手順のためだけにアカウント機能を変更する必要はありません。同じ構成をシドニーでも動かせます。アカウント変更の警告が表示された場合は、内容を確認してから進めてください。
+
+[公開デモ](https://aml-demo.trustyon.jp)は **シドニー（ap-southeast-2）** で稼働しています。インスタンスと固定 IP はリージョンごとのリソースなので、作成前にリージョンを決めてください。
 
 ### 3. 固定 IP の割り当て
 
