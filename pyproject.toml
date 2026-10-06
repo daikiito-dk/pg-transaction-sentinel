@@ -1,8 +1,9 @@
 [project]
 name = "pg-transaction-sentinel"
 version = "0.1.0"
-description = "PostgreSQL × ML によるリアルタイム不審取引（AML）検知ダッシュボード"
+description = "AML suspicious transaction monitoring dashboard with PostgreSQL and ML / PostgreSQL × ML による不審取引（AML）検知ダッシュボード"
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.26",

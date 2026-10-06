@@ -121,13 +121,17 @@ try:
     data = load_monitoring_data()
 except Exception as exc:  # noqa: BLE001 - surface any DB connectivity issue to the analyst
     st.error(
-        "PostgreSQL に接続できません。`docker compose up -d` と `make data score` を"
-        f"実行してください。\n\n`{exc}`"
+        "Cannot connect to PostgreSQL. Run `make up` and then `make data score`.\n\n"
+        "PostgreSQL に接続できません。`make up` のあと `make data score` を実行してください。"
+        f"\n\n`{exc}`"
     )
     st.stop()
 
 if data.empty or data["risk_score"].isna().all():
-    st.warning("スコアがありません。`make data score` を実行してください。")
+    st.warning(
+        "No risk scores found. Run `make data score`.\n\n"
+        "スコアがありません。`make data score` を実行してください。"
+    )
     st.stop()
 
 with st.sidebar:
@@ -305,12 +309,13 @@ with tab_alerts:
     selected_rows = event.selection.rows if event is not None else []
     st.divider()
     if not watchlist:
-        st.info("条件に一致するアラートはありません。")
+        st.info("No alerts match the filters. / 条件に一致するアラートはありません。")
         st.stop()
 
     default_account = table.loc[selected_rows[0], "Account"] if selected_rows else watchlist[0]
     account_id = st.selectbox(
-        "Account investigation（表の行を選択しても切り替わります）",
+        "Account investigation (or select a row in the table) / "
+        "口座調査（表の行を選択しても切り替わります）",
         watchlist,
         index=watchlist.index(default_account),
         format_func=lambda a: f"{a} · {data.loc[data['account_id'] == a, 'customer_name'].iat[0]}",
