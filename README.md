@@ -6,6 +6,17 @@ A tech demo of an anti-money laundering (AML) suspicious transaction monitoring 
 
 PostgreSQL stores the core banking data. An Isolation Forest model (scikit-learn) and money-laundering typology rules give every transaction a risk score from 0 to 100, and a dark-mode Streamlit dashboard shows the alerts. The project is an example of building an enterprise-style prototype in a short time with AI-driven development ("vibe coding").
 
+## Background
+
+Japanese banks have long run core systems on mainframes and commercial databases. To cut costs and move faster, more of them now use open-source-based technology such as PostgreSQL and Apache Kafka, driven by cloud migration of core banking systems and microservice architectures.
+
+- **Sony Bank** moved its entire core banking system to AWS in May 2025. Its core banking and information system data are stored in Amazon Aurora PostgreSQL-Compatible Edition. ([AWS blog](https://aws.amazon.com/jp/blogs/news/casestudy-sonybank-core-banking-migration/), [Sony Bank press release](https://sonybank.jp/corporate/disclosure/press/2025/0507-01.html), [ASCII.jp](https://ascii.jp/elem/000/004/267/4267600/))
+- **Japan Digital Design** (MUFG) published a case study of adopting Amazon Aurora DSQL, a PostgreSQL-compatible database. ([AWS blog, July 2026](https://aws.amazon.com/jp/blogs/news/db-customercase-japan-digital-design-dsql/))
+- **Shared core banking systems for regional banks** are moving from mainframes to open architectures. One major vendor announced a rehost onto IA servers, RHEL, and PostgreSQL. In the MEJAR shared system used by Bank of Yokohama and others, the OS changes to Red Hat Enterprise Linux and the database to PostgreSQL. ([IIJ.news](https://www.iij.ad.jp/news/iijnews/vol_179/detail_04.html), [Nikkei xTECH](https://xtech.nikkei.com/atcl/nxt/column/18/00001/05491/))
+- **Minna Bank** (Fukuoka Financial Group) built its core banking system on Google Cloud with microservices on Kubernetes and uses Apache Kafka for message queuing. ([ITmedia](https://www.itmedia.co.jp/enterprise/articles/1912/11/news125.html), [Nikkei xTECH](https://xtech.nikkei.com/atcl/nxt/column/18/01281/042100002/))
+
+This demo uses PostgreSQL as the data store. Kafka is not used.
+
 ## Architecture
 
 ```
@@ -123,6 +134,17 @@ All data is synthetic and fictional. It is not related to any real person or acc
 PostgreSQL と機械学習による、不審取引（AML: アンチ・マネー・ロンダリング）検知ダッシュボードの技術デモです。
 
 PostgreSQL に勘定系のデータを保存します。Isolation Forest（scikit-learn）と、典型的なマネロン手口（タイポロジー）のルールを組み合わせて、各取引に 0〜100 の不審度スコアを付けます。結果はダークモードの Streamlit ダッシュボードに表示します。AI 主導の開発（バイブコーディング）で、エンタープライズ向けのプロトタイプを短時間で作る例として公開しています。
+
+### 背景
+
+日本の銀行では、長くメインフレームや商用データベースが勘定系を支えてきました。近年は、コスト削減と開発の俊敏性を目的に、勘定系のクラウド移行やマイクロサービス化が進んでいます。それにともない、PostgreSQL や Apache Kafka といったオープンソース由来の技術の採用が広がっています。
+
+- **ソニー銀行**は 2025 年 5 月に、勘定系システム全体を AWS へ移行しました。勘定系データや情報系データは、Amazon Aurora PostgreSQL 互換エディションに保存しています。（[AWS ブログ](https://aws.amazon.com/jp/blogs/news/casestudy-sonybank-core-banking-migration/)、[ソニー銀行プレスリリース](https://sonybank.jp/corporate/disclosure/press/2025/0507-01.html)、[ASCII.jp](https://ascii.jp/elem/000/004/267/4267600/)）
+- **Japan Digital Design**（MUFG）は、PostgreSQL 互換の Amazon Aurora DSQL を導入した事例を公開しています。（[AWS ブログ、2026 年 7 月](https://aws.amazon.com/jp/blogs/news/db-customercase-japan-digital-design-dsql/)）
+- **地銀向けの勘定系共同システム**では、メインフレームからオープン系への移行が進んでいます。大手ベンダーの 1 社は、IA サーバ・RHEL・PostgreSQL の上にリホストする方針を示しています。横浜銀行などが使う共同システム MEJAR でも、OS を Red Hat Enterprise Linux に、データベースを PostgreSQL に置き換えます。（[IIJ.news](https://www.iij.ad.jp/news/iijnews/vol_179/detail_04.html)、[日経クロステック](https://xtech.nikkei.com/atcl/nxt/column/18/00001/05491/)）
+- **みんなの銀行**（ふくおかフィナンシャルグループ）は、Google Cloud 上に勘定系システムを構築しました。Kubernetes によるマイクロサービス構成で、メッセージキューに Apache Kafka を使っています。（[ITmedia](https://www.itmedia.co.jp/enterprise/articles/1912/11/news125.html)、[日経クロステック](https://xtech.nikkei.com/atcl/nxt/column/18/01281/042100002/)）
+
+このデモでは、データの保存先に PostgreSQL を使っています。Kafka は使っていません。
 
 ### アーキテクチャ
 
