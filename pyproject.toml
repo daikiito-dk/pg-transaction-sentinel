@@ -1,0 +1,39 @@
+[project]
+name = "pg-transaction-sentinel"
+version = "0.1.0"
+description = "PostgreSQL × ML によるリアルタイム不審取引（AML）検知ダッシュボード"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "plotly>=5.22",
+    "psycopg2-binary>=2.9",
+    "python-dotenv>=1.0",
+    "scikit-learn>=1.5",
+    "sqlalchemy>=2.0",
+    "streamlit>=1.38",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "N"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["N802"]
