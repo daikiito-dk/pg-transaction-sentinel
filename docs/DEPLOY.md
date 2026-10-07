@@ -21,7 +21,9 @@ Internet ──▶ Caddy (80/443, HTTPS) ──▶ Streamlit app ──▶ Postg
 | Static IP (while attached to an instance) | Free |
 | Domain | Your existing domain |
 
-Prices are from the [Lightsail instance bundles](https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-bundles.html) page. Check the page for current prices before you start. The stack uses about 300 MB of memory, so the 2 GB plan has headroom. The 1 GB plan is not recommended.
+Prices are from the [Lightsail instance bundles](https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-bundles.html) page. Check the page for current prices before you start. The original AML stack used about 300 MB of memory; the expanded model demos and concurrent sessions can use more. Monitor actual memory after deployment. The 1 GB plan is not recommended.
+
+Optional Kafka and Keycloak containers are **local developer tools**, not part of this production Compose stack. Do not add them to the 2 GB public instance or enable provisioning for anonymous visitors. Keep `PUBLIC_DEMO=true`; use the explicitly labeled sample event mode unless a read-only broker connection is deliberately configured.
 
 ## 1. Prepare your AWS account
 
@@ -156,7 +158,9 @@ Amazon Lightsail のインスタンス 1 台で、Docker Compose を使ってダ
 | 固定 IP（インスタンスに割り当て中） | 無料 |
 | ドメイン | お手持ちのドメイン |
 
-料金は [Lightsail のインスタンスプラン](https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-bundles.html) のページに基づいています。始める前に最新の料金を確認してください。この構成のメモリ使用量は約 300MB なので、2GB プランなら余裕があります。1GB プランはおすすめしません。
+料金は [Lightsail のインスタンスプラン](https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-bundles.html) のページに基づいています。始める前に最新の料金を確認してください。従来の AML 構成は約 300MB でしたが、追加のモデルや同時利用により増える場合があります。公開後に実際のメモリ使用量を確認してください。1GB プランはおすすめしません。
+
+Kafka と Keycloak は**ローカル開発用の任意ツール**で、本番 Compose の構成には含めません。2GB の公開インスタンスへ追加したり、匿名の訪問者に環境作成を許可したりしないでください。`PUBLIC_DEMO=true` を維持し、読み取り専用のブローカー接続を明示的に設定しない限り、電文はサンプルモードで表示します。
 
 ### 1. AWS アカウントの準備
 

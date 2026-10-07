@@ -1,0 +1,58 @@
+{
+  "realm": "sentinel-demo",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "rememberMe": false,
+  "verifyEmail": false,
+  "loginWithEmailAllowed": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "aml-analyst",
+        "description": "Fictional AML analyst role for the demo"
+      },
+      {
+        "name": "branch-staff",
+        "description": "Fictional branch staff role for the demo"
+      },
+      {
+        "name": "demo-observer",
+        "description": "Fictional read-only observer role for the demo"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "demo-analyst",
+      "email": "demo.analyst@sentinel.example.invalid",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Anzu",
+      "lastName": "Yamada",
+      "requiredActions": ["UPDATE_PASSWORD"],
+      "realmRoles": ["aml-analyst"]
+    },
+    {
+      "username": "demo-branch",
+      "email": "demo.branch@sentinel.example.invalid",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Hikaru",
+      "lastName": "Sato",
+      "requiredActions": ["UPDATE_PASSWORD"],
+      "realmRoles": ["branch-staff"]
+    },
+    {
+      "username": "demo-observer",
+      "email": "demo.observer@sentinel.example.invalid",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Rin",
+      "lastName": "Kobayashi",
+      "requiredActions": ["UPDATE_PASSWORD"],
+      "realmRoles": ["demo-observer"]
+    }
+  ]
+}

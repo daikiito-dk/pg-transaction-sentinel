@@ -1,4 +1,4 @@
-.PHONY: setup up down data score app test lint format all
+.PHONY: setup up down data score app demo test lint format all
 
 setup:
 	uv sync
@@ -18,6 +18,9 @@ score:
 
 app:
 	uv run streamlit run app.py
+
+demo:
+	PUBLIC_DEMO=true uv run streamlit run app.py --server.address 127.0.0.1 --server.port 8502
 
 test:
 	uv run pytest -q

@@ -1,16 +1,21 @@
 [project]
 name = "pg-transaction-sentinel"
 version = "0.1.0"
-description = "AML suspicious transaction monitoring dashboard with PostgreSQL and ML / PostgreSQL × ML による不審取引（AML）検知ダッシュボード"
+description = "Banking Scenario Lab: PostgreSQL, ML, Kafka and QuantLib demos / PostgreSQL・ML・Kafka・QuantLibによる銀行業務デモ集"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 dependencies = [
+    "defusedxml>=0.7.1",
+    "kafka-python>=3.0.11",
+    "lightgbm>=4.7.0",
     "numpy>=1.26",
     "pandas>=2.2",
     "plotly>=5.22",
     "psycopg2-binary>=2.9",
     "python-dotenv>=1.0",
+    "quantlib>=1.43",
+    "requests>=2.34.2",
     "scikit-learn>=1.5",
     "sqlalchemy>=2.0",
     "streamlit>=1.38",

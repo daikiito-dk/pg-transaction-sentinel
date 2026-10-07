@@ -9,7 +9,9 @@ import plotly.express as px
 import streamlit as st
 
 import ml_engine
+from banking_scenes import render_branch_scene, render_customer_scene, render_demo_header
 from config import HIGH_RISK_THRESHOLD, MEDIUM_RISK_THRESHOLD, PUBLIC_DEMO, get_engine
+from demos.catalog import render_extra_scene
 
 LEVEL_COLORS = {"HIGH": "#ef4444", "MEDIUM": "#f59e0b", "LOW": "#22c55e"}
 TYPOLOGY_LABELS = {
@@ -26,7 +28,7 @@ TXN_TYPE_LABELS = {
 }
 
 st.set_page_config(
-    page_title="PG Transaction Sentinel | AML Monitoring",
+    page_title="Banking Scenario Lab | PG Transaction Sentinel",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -117,6 +119,11 @@ def apply_dark_layout(fig, height: int = 360):
 # --------------------------------------------------------------------------- #
 # Layout
 # --------------------------------------------------------------------------- #
+scene = render_demo_header()
+
+if render_extra_scene(scene):
+    st.stop()
+
 try:
     data = load_monitoring_data()
 except Exception as exc:  # noqa: BLE001 - surface any DB connectivity issue to the analyst
@@ -127,7 +134,19 @@ except Exception as exc:  # noqa: BLE001 - surface any DB connectivity issue to 
     )
     st.stop()
 
-if data.empty or data["risk_score"].isna().all():
+if data.empty:
+    st.warning("No transaction data found. / 取引データがありません。")
+    st.stop()
+
+if scene == "customer":
+    render_customer_scene(data)
+    st.stop()
+
+if scene == "branch":
+    render_branch_scene(data)
+    st.stop()
+
+if data["risk_score"].isna().all():
     st.warning(
         "No risk scores found. Run `make data score`.\n\n"
         "スコアがありません。`make data score` を実行してください。"

@@ -1,0 +1,100 @@
+# Optional local companion services for the demo tooling. / デモツール用のローカル専用
+# サービス（任意）。
+#
+# These services are strictly local: every port is bound to 127.0.0.1 and the
+# JVMs are capped, so nothing here is reachable from other machines and nothing
+# here can exhaust the host. Start them explicitly via compose profiles:
+# これらはローカル専用です。すべてのポートは 127.0.0.1 にのみ bind され、JVM の
+# メモリも制限しています。プロファイルを指定して明示的に起動してください。
+#
+#   docker compose -f docker-compose.tools.yml --env-file .env.tools --profile kafka up -d --wait
+#   docker compose -f docker-compose.tools.yml --env-file .env.tools --profile keycloak up -d --wait
+#   docker compose -f docker-compose.tools.yml down
+#
+# The project name is separate ("sentinel-tools") so the shared aml-postgres
+# service from docker-compose.yml is never touched.
+# プロジェクト名は分離してあるため、docker-compose.yml の aml-postgres には
+# 影響しません。
+#
+# Keycloak requires KEYCLOAK_ADMIN_PASSWORD to be set (in the untracked
+# .env.tools, passed via --env-file, or the environment); compose refuses to
+# start without it.
+# Keycloak は KEYCLOAK_ADMIN_PASSWORD の設定が必須です（追跡対象外の .env.tools
+# を --env-file で渡すか、環境変数で設定してください）。
+
+name: sentinel-tools
+
+services:
+  # Single-node KRaft broker for the banking.transfers topic demo. The monitor
+  # consumer always uses group_id=None, so this broker keeps no consumer groups.
+  # banking.transfers トピック用の単一ノード KRaft ブローカー。
+  kafka:
+    image: apache/kafka:3.9.0
+    profiles: ["kafka"]
+    container_name: sentinel-kafka
+    environment:
+      CLUSTER_ID: "8DNWljHDU3Mpj1/yF8YXow"
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@127.0.0.1:9093
+      # Hostless listener form binds every interface inside the container; the
+      # host-side port below is still published to loopback only, and the
+      # advertised address tells clients to use 127.0.0.1.
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      # Cap the JVM so a local demo broker cannot balloon.
+      KAFKA_HEAP_OPTS: "-Xms128m -Xmx256m"
+    ports:
+      - "127.0.0.1:9092:9092"
+    volumes:
+      - sentinel-kafka-data:/var/lib/kafka/data
+    mem_limit: 512m
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server 127.0.0.1:9092 >/dev/null 2>&1 || exit 1",
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
+
+  # Local Keycloak for the fictional sentinel-demo realm. Admin credentials come
+  # from the environment only (see .env.tools.example); realm/users carry no
+  # static passwords and are provisioned with temporary ones via the tooling.
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.5
+    profiles: ["keycloak"]
+    container_name: sentinel-keycloak
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-demo-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Set KEYCLOAK_ADMIN_PASSWORD in .env.tools (never commit it) / .env.tools に設定してください（コミット禁止）}
+      KC_HEALTH_ENABLED: "true"
+      # Cap the JVM so a local demo server cannot balloon.
+      JAVA_OPTS_KC_HEAP: "-Xms64m -Xmx256m"
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./deploy/keycloak:/opt/keycloak/data/import:ro
+    mem_limit: 768m
+    healthcheck:
+      # The ubi-micro image ships no curl; bash's /dev/tcp probes the KC 26
+      # management interface (port 9000, never published to the host).
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && echo -e 'GET /health/ready HTTP/1.0\\r\\n\\r' >&3 && grep -q '200 OK' <&3"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 40s
+
+volumes:
+  sentinel-kafka-data:
